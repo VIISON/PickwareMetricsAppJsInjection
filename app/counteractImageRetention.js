@@ -23,8 +23,12 @@ function moveOneToTarget() {
   let dirY = moveDirection(targetPos[1], currentPos[1]);
 
   currentPos = [currentPos[0]+dirX, currentPos[1]+dirY]
-  document.getElementById('dashboard-wrapper').style.left = `${currentPos[0]}px`;
-  document.getElementById('dashboard-wrapper').style.top = `${currentPos[1]}px`;
+
+  const element = document.getElementById('dashboard-wrapper');
+  if (element) {
+      element.style.left = `${currentPos[0]}px`;
+      element.style.top = `${currentPos[1]}px`;
+  }
 }
 
 function counteractImageRetention() {

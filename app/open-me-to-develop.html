@@ -9,6 +9,19 @@
         window.pickware_automation_password = '';
     </script>
     <script src="../build/dashboard-injection.js"></script>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+      }
+    </style>
   </head>
   <body></body>
 </html>
+
+
+curl \
+  thomas:bier@localhost:5000/events \
+  -X PUT \
+  -H 'Content-type: application/json' \
+  -d '{"topic": "dashboard/notification/text", "payload": {"items": ["*"], "count":100}}'
