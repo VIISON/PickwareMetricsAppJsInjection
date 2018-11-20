@@ -41,7 +41,7 @@ function init() {
 
     socket.on('dashboard/animation/snow', (payload) => {
         animationManager.runAnimation(
-            new SnowAnimation(payload.items, payload.count),
+            new SnowAnimation(payload.items, payload.count, payload.colors, payload.emitProbability),
             payload.duration ? parseDuration(payload.duration) : undefined
         );
     });

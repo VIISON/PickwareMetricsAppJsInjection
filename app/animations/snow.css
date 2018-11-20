@@ -8,5 +8,6 @@
     width: 0px;
     height: 0px;
     overflow: visible;
+    white-space: nowrap;
     display: none;
 }

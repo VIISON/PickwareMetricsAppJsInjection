@@ -2,7 +2,8 @@ const $ = require('jquery');
 require('./snow.css');
 
 class Flake {
-    constructor(element) {
+    constructor(element, animation) {
+        this.animation = animation;
         this.element = element;
         this.minSpeed = 0.3;
         this.maxSpeed = 1.5;
@@ -24,8 +25,9 @@ class Flake {
         this.xOffset = window.innerWidth*Math.random();
         this.xFactor = this.maxMovement*Math.random();
         this.maxRotation=-0.5*this.maxMovement+Math.random()*this.maxMovement;
+        this.color = this.animation.colors[Math.floor(Math.random()*this.animation.colors.length)]
 
-        this.y = -window.innerHeight*Math.random();
+        this.y = -50;
         this.x = this.xOffset;
         this.rotation = 0;
     }
@@ -48,68 +50,64 @@ class Flake {
     }
 
     show() {
-        this.element.style.display = 'block'
+        this.element.style.color = this.color;
+        this.element.style.display = 'block';
     }
 }
 
 class LetterSnow {
-  constructor(words, maxFlakes) {
-    this.words = words;
-    this.flakes = [];
-    this.flakeCount = 80;
-
-    this.remainingFlakes = maxFlakes || Infinity;
-  }
-
-  init() {
-    for (let i = 0; i < this.flakeCount; i++) {
-      this.spawnFlake()
+    constructor(words, maxFlakes, colors, emitProbability) {
+        this.words = words;
+        this.flakes = [];
+        this.flakeCount = 80;
+        this.emitProbability = emitProbability || 0.05;
+        this.remainingFlakes = maxFlakes || Infinity;
+        this.colors = colors || ['#fff']
     }
-  }
 
-  animate() {
-    this.flakes.map( (flake) => {
-        flake.animate();
-        if (!flake.isInView()) {
-            flake.markForRemoval()
+    animate() {
+        this.flakes.map( (flake) => {
+            flake.animate();
+            if (!flake.isInView()) {
+                flake.markForRemoval()
+            }
+        })
+        this.flakes = this.flakes.filter((flake) => !flake.markedForRemoval)
+        this.respawnMissingFlakes();
+
+        if (this.remainingFlakes > 0 || this.flakes.length > 0) {
+            window.requestAnimationFrame(() => {
+              this.animate();
+            });
         }
-    })
-    this.flakes = this.flakes.filter((flake) => !flake.markedForRemoval)
-    this.respawnMissingFlakes();
-
-    if (this.remainingFlakes > 0 || this.flakes.length > 0) {
-      window.requestAnimationFrame(() => {
-        this.animate();
-      });
-    }
-  }
-
-  spawnFlake() {
-    if (this.remainingFlakes <= 0) {
-      return
     }
 
-    let word = this.words[Math.floor(Math.random()*this.words.length)]
-    $("body").append(`<div class="snowFlakeAnimationSnowFlake">${word}</div>`);
+    spawnFlake() {
+        if (this.remainingFlakes <= 0) {
+            return
+        }
 
-    let newestFlake = $('.snowFlakeAnimationSnowFlake').last().get()[0];
-    let flake = new Flake(newestFlake)
-    flake.updatePosition();
-    flake.show();
-    this.flakes.push(flake)
+        let word = this.words[Math.floor(Math.random()*this.words.length)]
+        $("body").append(`<div class="snowFlakeAnimationSnowFlake">${word}</div>`);
 
-    this.remainingFlakes -= 1;
-  }
+        let newestFlake = $('.snowFlakeAnimationSnowFlake').last().get()[0];
+        let flake = new Flake(newestFlake, this)
+        flake.updatePosition();
+        flake.show();
+        this.flakes.push(flake)
 
-  stop() {
-    this.remainingFlakes = 0;
-  }
-
-  respawnMissingFlakes() {
-    for (let i = this.flakes.length; i < this.flakeCount; i++) {
-      this.spawnFlake();
+        this.remainingFlakes -= 1;
     }
-  }
+
+    stop() {
+        this.remainingFlakes = 0;
+    }
+
+    respawnMissingFlakes() {
+        if (Math.random() < this.emitProbability) {
+            this.spawnFlake();
+        }
+    }
 }
 
 
