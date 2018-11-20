@@ -2,54 +2,54 @@ const $ = require('jquery');
 require('./snow.css');
 
 class Flake {
-  constructor(element) {
-    this.element = element;
-    this.minSpeed = 0.3;
-    this.maxSpeed = 1.5;
-    this.maxMovement = 80;
-    this.maxFullSines = 10;
-    this.markedForRemoval = false;
-    this.shuffleConfig();
-  }
+    constructor(element) {
+        this.element = element;
+        this.minSpeed = 0.3;
+        this.maxSpeed = 1.5;
+        this.maxMovement = 80;
+        this.maxFullSines = 10;
+        this.markedForRemoval = false;
+        this.shuffleConfig();
+    }
 
-  markForRemoval() {
-      $(this.element).remove()
-      this.markedForRemoval = true;
-  }
+    markForRemoval() {
+        $(this.element).remove()
+        this.markedForRemoval = true;
+    }
 
-  shuffleConfig() {
-    this.fullSineMultiplier = Math.random()*this.maxFullSines;
-    this.element.style.fontSize = 0.5+Math.random()*2+'em';
-    this.speed = Math.random()*(this.maxSpeed-this.minSpeed)+this.minSpeed;
-    this.xOffset = window.innerWidth*Math.random();
-    this.xFactor = this.maxMovement*Math.random();
-    this.maxRotation=-0.5*this.maxMovement+Math.random()*this.maxMovement;
+    shuffleConfig() {
+        this.fullSineMultiplier = Math.random()*this.maxFullSines;
+        this.element.style.fontSize = 0.5+Math.random()*2+'em';
+        this.speed = Math.random()*(this.maxSpeed-this.minSpeed)+this.minSpeed;
+        this.xOffset = window.innerWidth*Math.random();
+        this.xFactor = this.maxMovement*Math.random();
+        this.maxRotation=-0.5*this.maxMovement+Math.random()*this.maxMovement;
 
-    this.y = -window.innerHeight*Math.random();
-    this.x = this.xOffset;
-    this.rotation = 0;
-  }
+        this.y = -window.innerHeight*Math.random();
+        this.x = this.xOffset;
+        this.rotation = 0;
+    }
 
-  isInView() {
-    return !(this.y > window.innerHeight)
-  }
+    isInView() {
+        return !(this.y > window.innerHeight)
+    }
 
-  animate() {
-    let sin = Math.sin(this.y/window.innerHeight*this.fullSineMultiplier);
-    this.x = this.xOffset+sin*this.xFactor;
-    this.y += this.speed;
-    this.rotation = this.maxRotation*sin;
+    animate() {
+        let sin = Math.sin(this.y/window.innerHeight*this.fullSineMultiplier);
+        this.x = this.xOffset+sin*this.xFactor;
+        this.y += this.speed;
+        this.rotation = this.maxRotation*sin;
 
-    this.updatePosition();
-  }
+        this.updatePosition();
+    }
 
-  updatePosition() {
-    this.element.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
-  }
+    updatePosition() {
+        this.element.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+    }
 
-  show() {
-    this.element.style.display = 'block'
-  }
+    show() {
+        this.element.style.display = 'block'
+    }
 }
 
 class LetterSnow {
@@ -90,9 +90,9 @@ class LetterSnow {
     }
 
     let word = this.words[Math.floor(Math.random()*this.words.length)]
-    $("body").append(`<div class="flake">${word}</div>`);
+    $("body").append(`<div class="snowFlakeAnimationSnowFlake">${word}</div>`);
 
-    let newestFlake = $('.flake').last().get()[0];
+    let newestFlake = $('.snowFlakeAnimationSnowFlake').last().get()[0];
     let flake = new Flake(newestFlake)
     flake.updatePosition();
     flake.show();
