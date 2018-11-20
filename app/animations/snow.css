@@ -9,5 +9,7 @@
     height: 0px;
     overflow: visible;
     white-space: nowrap;
-    display: none;
+    opacity: 0;
+    will-change: transform; /* Optimize transfomations on own layer => Chrome */
+    transform: translateZ(0); /* Layer creation optimization for Safari */
 }

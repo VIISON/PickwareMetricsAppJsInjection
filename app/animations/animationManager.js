@@ -7,6 +7,7 @@ class AnimationManager {
         this.stop();
         this.currentAnimation = animation;
 
+        animation.init();
         animation.animate();
 
         // Stop animation after given interval
