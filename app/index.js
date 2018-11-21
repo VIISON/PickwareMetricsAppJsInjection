@@ -50,6 +50,10 @@ function init() {
         window.location.reload(true);
     });
 
+    animationManager.runAnimation(
+        new SnowAnimation(["*"], undefined, undefined, 0.1), parseDuration("10d")
+    );
+
     textNotification('Extensions loaded', 1.25);
 }
 
