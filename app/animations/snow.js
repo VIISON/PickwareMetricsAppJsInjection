@@ -14,7 +14,7 @@ class Flake {
     }
 
     shuffleConfig() {
-        this.scale = 0.5+Math.random()*2;
+        this.scale = Math.round(0.5+Math.random()*2*100)/100;
         this.speed = Math.random()*(this.maxSpeed-this.minSpeed)+this.minSpeed;
         this.xOffset = window.innerWidth*Math.random();
         this.xFactor = this.maxMovement*Math.random();
@@ -22,7 +22,7 @@ class Flake {
         this.color = this.animation.colors[Math.floor(Math.random()*this.animation.colors.length)]
 
         // Stack them by size, smaller items are in the background
-        this.zIndex = 2000000 - Math.floor((10-this.scale) * 100);
+        this.zIndex = 2000000 - Math.floor((2-this.scale) * 10);
         this.yOffset = -100;
         this.y = 0;
         this.x = this.xOffset;
@@ -39,17 +39,16 @@ class Flake {
         return !(this.y > window.innerHeight)
     }
 
-    animate() {
+    animate(now) {
         if (this.readyForReuse) {
-            this.spawnTime = new Date().getTime();
+            this.spawnTime = now;
         }
 
-        const now = new Date().getTime()
         const secondsAlive = (now - this.spawnTime)/1000
         const sin = Math.sin(secondsAlive/7);
-        this.x = this.xOffset + sin * this.xFactor;
-        this.y = this.yOffset + secondsAlive * 30 * this.speed;
-        this.rotation = this.maxRotation*sin;
+        this.x = Math.round((this.xOffset + sin * this.xFactor) * 4) / 4;
+        this.y = Math.round((this.yOffset + secondsAlive * 30 * this.speed) * 4) / 4;
+        this.rotation = Math.round(this.maxRotation*sin * 4)/4;
 
         this.updatePosition();
 
@@ -76,28 +75,33 @@ class LetterSnow {
         this.flakePool = [];
         this.flakes = [];
         this.flakeCount = 80;
-        this.emitProbability = Math.min(0.25, emitProbability || 0.05);
+        this.emitProbability = Math.min(0.20, emitProbability || 0.05);
         this.remainingFlakes = maxFlakes || Infinity;
         this.colors = colors || ['#fff']
+
     }
 
     animate() {
-        this.flakes.map( (flake) => {
-            flake.animate();
+        let deletions = []
+        const now = new Date().getTime()
+
+        this.flakes.forEach( (flake, idx) => {
+            flake.animate(now);
             if (!flake.isInView()) {
                 flake.prepareForReuse()
+                deletions.push(idx)
             }
         })
-        this.flakes = this.flakes.filter((flake) => !flake.readyForReuse)
-        this.respawnMissingFlakes();
 
-        if (this.remainingFlakes > 0 || this.flakes.length > 0) {
-            window.requestAnimationFrame(() => {
-                this.animate();
-            });
-        } else {
-            this.animationDidFinish();
-        }
+        deletions.forEach((idx) => {
+            delete this.flakes[idx]
+        })
+
+        this.respawnMissingFlakes();
+    }
+
+    animationHasEnded() {
+        return !(this.remainingFlakes > 0 || this.flakes.length > 0);
     }
 
     animationDidFinish() {
@@ -119,7 +123,8 @@ class LetterSnow {
           })
           .join('')
 
-      $('body').append(poolHtml)
+
+      $('body').append(`<div class="snowflakeConatiner">${poolHtml}</div>`)
 
       return $('.snowFlakeAnimationSnowFlake')
           .toArray()

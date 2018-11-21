@@ -1,13 +1,7 @@
 .snowFlakeAnimationSnowFlake {
-    z-index:200000000;
-    width: 16px;
     position: fixed;
     color: white;
-    #font-weight: bold;
     font-family: "Arial", Times, serif;
-    width: 0px;
-    height: 0px;
-    overflow: visible;
     white-space: nowrap;
     opacity: 0;
     will-change: transform; /* Optimize transfomations on own layer => Chrome */

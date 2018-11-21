@@ -1,6 +1,7 @@
 class AnimationManager {
     constructor() {
         this.currentAnimation = null;
+        this.lastAnimationFrame = new Date().getTime();
     }
 
     runAnimation(animation, duration) {
@@ -8,7 +9,7 @@ class AnimationManager {
         this.currentAnimation = animation;
 
         animation.init();
-        animation.animate();
+        this.animate(animation);
 
         // Stop animation after given interval
         if (duration && !isNaN(duration)) {
@@ -16,6 +17,21 @@ class AnimationManager {
                 this.currentAnimation.stop()
             }, duration);
         }
+    }
+
+    animate(animation) {
+        let animateFunction = () => {
+            if (!animation.animationHasEnded()) {
+                window.requestAnimationFrame(() => {
+                    animation.animate();
+                    animateFunction();
+                })
+            } else {
+                animation.animationDidFinish();
+            }
+        };
+
+        animateFunction();
     }
 
     stop() {
