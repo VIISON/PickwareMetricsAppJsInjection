@@ -8,11 +8,15 @@ const fixLayout = require('./layout-fix');
 const counteractImageRetention = require('./counteractImageRetention');
 const SnowAnimation = require('./animations/snow');
 const AnimationManager = require('./animations/animationManager')
+const throttleQueue = require('throttled-queue');
+
+const throttle = throttleQueue(1, 60*1000, true);
 
 // Inline CSS via webpack
 require('./style.css');
 
 function init() {
+
     // Fix viewport
     fixLayout();
     counteractImageRetention();
@@ -40,19 +44,28 @@ function init() {
     });
 
     socket.on('dashboard/animation/snow', (payload) => {
-        animationManager.runAnimation(
-            new SnowAnimation(payload.items, payload.count, payload.colors, payload.emitProbability),
-            payload.duration ? parseDuration(payload.duration) : undefined
-        );
+        let runAnimation = () => {
+            animationManager.runAnimation(
+                new SnowAnimation(payload.items, payload.count, payload.colors, payload.emitProbability),
+                payload.duration ? parseDuration(payload.duration) : undefined
+            );
+        };
+
+        if (animationManager.currentAnimation != null && !animationManager.isDefaultAnimation) {
+            throttle(() => runAnimation());
+        } else {
+            runAnimation();
+        }
     });
 
     socket.on('dashboard/reload', () => {
         window.location.reload(true);
     });
 
-    animationManager.runAnimation(
-        new SnowAnimation(["*"], undefined, undefined, 0.1), parseDuration("10d")
-    );
+
+    animationManager.setDefaultAnimation(() => {
+        return new SnowAnimation(["*"], undefined, undefined, 0.1)
+    });
 
     textNotification('Extensions loaded', 1.25);
 }
