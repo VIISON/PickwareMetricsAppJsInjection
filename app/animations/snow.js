@@ -10,11 +10,14 @@ class Flake {
         this.maxMovement = 80;
         this.markedForRemoval = false;
         this.readyForReuse = true;
+        this.fontSize = '3em';
         this.shuffleConfig();
     }
 
     shuffleConfig() {
-        this.scale = Math.round(0.5+Math.random()*2*100)/100;
+        let minScale = 0.25;
+        // only scale down
+        this.scale = minScale + (Math.random() * (1-minScale));
         this.speed = Math.random() * (this.maxSpeed-this.minSpeed) * this.scale + this.minSpeed;
         this.xOffset = window.innerWidth*Math.random();
         this.xFactor = this.maxMovement*Math.random();
@@ -63,6 +66,7 @@ class Flake {
     }
 
     show() {
+        this.element.style.fontSize = this.fontSize;
         this.element.style.color = this.color;
         this.element.style.opacity = 1;
         this.element.style.zIndex = this.zIndex;
