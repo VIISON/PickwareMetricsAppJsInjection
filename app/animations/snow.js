@@ -15,7 +15,7 @@ class Flake {
 
     shuffleConfig() {
         this.scale = Math.round(0.5+Math.random()*2*100)/100;
-        this.speed = Math.random()*(this.maxSpeed-this.minSpeed)+this.minSpeed;
+        this.speed = Math.random() * (this.maxSpeed-this.minSpeed) * this.scale + this.minSpeed;
         this.xOffset = window.innerWidth*Math.random();
         this.xFactor = this.maxMovement*Math.random();
         this.maxRotation=-0.5*this.maxMovement+Math.random()*this.maxMovement;
