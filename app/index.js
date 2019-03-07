@@ -63,9 +63,9 @@ function init() {
     });
 
 
-    animationManager.setDefaultAnimation(() => {
-        return new SnowAnimation(["*"], undefined, undefined, 0.1)
-    });
+    // animationManager.setDefaultAnimation(() => {
+    //     return new SnowAnimation(["*"], undefined, undefined, 0.1)
+    // });
 
     textNotification('Extensions loaded', 1.25);
 }
